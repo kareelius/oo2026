@@ -25,5 +25,5 @@ function calculateDrive(input: DriveInput): DriveResult {
 }
 
 // Example usage
-const result = calculateDrive({ speed: 90, hours: 3 });
+const result = calculateDrive({ speed: 170, hours: 0.5 });
 console.log(`The car will drive ${result.distance} ${result.unit}.`);

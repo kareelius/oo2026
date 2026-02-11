@@ -10,5 +10,5 @@ function calculateDrive(input) {
     };
 }
 // Example usage
-var result = calculateDrive({ speed: 90, hours: 3 });
+var result = calculateDrive({ speed: 170, hours: 0.5 });
 console.log("The car will drive ".concat(result.distance, " ").concat(result.unit, "."));

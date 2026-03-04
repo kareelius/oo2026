@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Homework 04</title>
+
+<script src="homework_04.js"></script>
+
+<script>
+
+function start(){
+
+    const canvas=document.getElementById("board1");
+    const ctx=canvas.getContext("2d");
+
+    let r1=new RectangleShape(50,80,100,60);
+    let r2=new RectangleShape(220,120,120,50);
+
+    r1.draw(ctx);
+    r2.draw(ctx);
+
+}
+
+</script>
+
+</head>
+
+<body onload="start()">
+
+<canvas id="board1" width="400" height="300"></canvas>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Homework 03</title>
+
+<script src="homework_03.js"></script>
+
+<script>
+
+let l1;
+
+function startPage(){
+
+    let canvas=document.getElementById("canvas1");
+    let ctx=canvas.getContext("2d");
+
+    l1=new Lamp(50,ctx,100,100);
+
+    document.getElementById("range1").value=String(l1.getBrightness());
+    document.getElementById("val1").innerText=l1.getBrightness();
+
+}
+
+function onRange1(input){
+
+    const v=input.valueAsNumber;
+
+    l1.setBrightness(v);
+
+    document.getElementById("val1").innerText=v;
+
+}
+
+</script>
+
+</head>
+
+<body onload="startPage()">
+
+<canvas id="canvas1" width="400" height="250"></canvas>
+
+<br>
+
+<input type="range" id="range1" min="0" max="100" oninput="onRange1(this)">
+<span id="val1"></span>
+
+</body>
+</html>

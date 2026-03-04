@@ -10,9 +10,14 @@ var Lamp = /** @class */ (function () {
     }
     Lamp.prototype.draw = function () {
         this.g.clearRect(this.x, this.y, this.width, this.height);
+        // brightness affects the color
+        var colorValue = 100 + this.brightness * 1.5;
+        this.g.fillStyle = "rgb(" + colorValue + "," + colorValue + ",0)";
         this.g.beginPath();
         this.g.rect(this.x, this.y, this.width, this.height);
+        this.g.fill();
         this.g.stroke();
+        this.g.fillStyle = "black";
         this.g.fillText("Brightness: " + this.brightness, this.x + 5, this.y + 25);
     };
     Lamp.prototype.setBrightness = function (b) {

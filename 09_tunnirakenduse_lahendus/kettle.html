@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kettle Simulator</title>
+</head>
+<body>
+
+<h2>Kettle Simulator</h2>
+
+<p>Max capacity: 3 liters (3000g)</p>
+
+<p id="output">No water has been added yet</p>
+
+<!-- INPUTS -->
+<label>Water (g)</label>
+<input id="waterAmount">
+
+<br><br>
+
+<label>Temperature (°C)</label>
+<input id="temperature">
+
+<br><br>
+
+<label>Power (W)</label>
+<input id="power">
+
+<br><br>
+
+<!-- NEW: Target temperature -->
+<label>Target Temperature (°C)</label>
+<input id="targetTemp">
+
+<br><br>
+
+<!-- BUTTONS -->
+<button id="startBtn">Add Water</button>
+<button id="heatBtn">Start Heating</button>
+<button id="stopBtn">Stop</button>
+<button id="calcBtn">Calculate Time</button>
+
+<script src="01_kettle.js"></script>
+
+<script>
+let water = null;
+let interval = null;
+
+// ADD WATER
+document.getElementById("startBtn").onclick = function () {
+
+    let m = document.getElementById("waterAmount").value;
+    let t = document.getElementById("temperature").value;
+    let p = document.getElementById("power").value;
+
+    if (m === "" || t === "" || p === "") {
+        document.getElementById("output").innerText =
+            "Please fill all fields";
+        return;
+    }
+
+    let mass = Number(m);
+
+    if (mass > 3000) {
+        document.getElementById("output").innerText =
+            "❌ Max capacity is 3 liters (3000g)";
+        return;
+    }
+
+    water = new Water(mass, Number(t));
+    water.setHeatingPower(Number(p));
+
+    document.getElementById("output").innerText =
+        "Water added. Temperature: " + t + " °C";
+};
+
+// HEATING SIMULATION
+document.getElementById("heatBtn").onclick = function () {
+
+    if (!water) {
+        document.getElementById("output").innerText =
+            "No water has been added yet";
+        return;
+    }
+
+    clearInterval(interval);
+
+    interval = setInterval(function () {
+
+        water.heatAsecond();
+
+        document.getElementById("output").innerText =
+            "Heating... " + water.getTemperature().toFixed(2) + " °C";
+
+        if (water.getTemperature() >= 100) {
+            clearInterval(interval);
+            document.getElementById("output").innerText =
+                "🔥 BOILING! 100°C reached";
+        }
+
+    }, 1000);
+};
+
+// STOP
+document.getElementById("stopBtn").onclick = function () {
+    clearInterval(interval);
+
+    if (water) {
+        document.getElementById("output").innerText =
+            "Stopped at " + water.getTemperature().toFixed(2) + " °C";
+    }
+};
+
+// 🆕 CALCULATE TARGET TIME
+document.getElementById("calcBtn").onclick = function () {
+
+    if (!water) {
+        document.getElementById("output").innerText =
+            "No water has been added yet";
+        return;
+    }
+
+    let target = document.getElementById("targetTemp").value;
+
+    if (target === "") {
+        document.getElementById("output").innerText =
+            "Please enter target temperature";
+        return;
+    }
+
+    let time = water.calculateHeatingTime(Number(target));
+
+    let seconds = Math.floor(time);
+    let minutes = Math.floor(seconds / 60);
+    let secs = seconds % 60;
+
+    document.getElementById("output").innerText =
+        "Time needed: " + minutes + "m " + secs + "s";
+};
+</script>
+
+</body>
+</html>

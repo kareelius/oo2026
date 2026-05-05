@@ -4,42 +4,50 @@
     <meta charset="UTF-8">
     <title>Library</title>
 
-    <!-- LAE JS FAIL ESIMESENA -->
+    <!-- Laeme kõigepealt klassid (Library, Book, DVD) -->
     <script src="Library.js"></script>
 
     <script>
+        // siia salvestame Library objekti
         let library = null;
 
+        // käivitub kui leht avaneb
         function startPage(){
-            library = new Library();
-            showItems();
+            library = new Library(); // loome uue library
+            showItems(); // kuvame (alguses tühi)
         }
 
+        // muudab vormi sõltuvalt kas Book või DVD
         function updateForm(){
             const type = document.getElementById("type").value;
 
+            // näita book välju ainult siis kui valitud book
             document.getElementById("book-fields").style.display =
                 type === "book" ? "" : "none";
 
+            // näita dvd välju ainult siis kui valitud dvd
             document.getElementById("dvd-fields").style.display =
                 type === "dvd" ? "" : "none";
         }
 
+        // lisab uue objekti (Book või DVD)
         function addItem(){
             const type = document.getElementById("type").value;
-            let item;
+            let item; // siia tuleb objekt
 
             try{
                 if (type === "book"){
+                    // loome Book objekti
                     item = new Book(
                         document.getElementById("id").value,
                         document.getElementById("title").value,
                         document.getElementById("author").value,
-                        Number(document.getElementById("year").value),
+                        Number(document.getElementById("year").value), // string → number
                         Number(document.getElementById("pages").value),
                         document.getElementById("ISBN").value
                     );
                 } else {
+                    // loome DVD objekti
                     item = new DVD(
                         document.getElementById("id").value,
                         document.getElementById("title").value,
@@ -49,17 +57,23 @@
                     );
                 }
 
+                // lisame objekti listi
                 library.addItem(item);
+
+                // uuendame ekraani
                 showItems();
 
             } catch (e){
+                // kui tekib viga (nt vale input)
                 alert(e.message);
             }
         }
 
+        // kuvab kõik objektid ekraanile
         function showItems(){
             const output = document.getElementById("output");
 
+            // kui list tühi
             if (!library || library.items.length === 0){
                 output.innerHTML = "No items";
                 return;
@@ -67,13 +81,17 @@
 
             let text = "";
 
+            // käime kõik objektid läbi
             for (let item of library.items){
+                // iga objekt annab oma teksti
                 text += item.getSummary() + "<br>";
             }
 
+            // paneme tulemuse HTML-i
             output.innerHTML = text;
         }
 
+        // pole tehtud (pole vaja praegu)
         function loadFile(){
             alert("Not implemented");
         }
@@ -87,6 +105,7 @@
 <body onload="startPage()">
     <h1>Library system</h1>
 
+    <!-- valik: Book või DVD -->
     <select id="type" onchange="updateForm()">
         <option value="book">Book</option>
         <option value="dvd">DVD</option>
@@ -94,24 +113,31 @@
 
     <br><br>
 
+    <!-- üldised väljad -->
     <input id="id" placeholder="ID">
     <input id="title" placeholder="Title">
     <input id="author" placeholder="Author">
     <input id="year" placeholder="Year">
 
+    <!-- Book väljad -->
     <span id="book-fields">
         <input id="pages" placeholder="Pages">
         <input id="ISBN" placeholder="ISBN">
     </span>
 
+    <!-- DVD väljad -->
     <span id="dvd-fields" style="display:none;">
         <input id="duration" placeholder="Duration">
     </span>
 
     <br><br>
+
+    <!-- nupp lisamiseks -->
     <button onclick="addItem()">Add</button>
 
     <hr>
+
+    <!-- siia kuvatakse tulemused -->
     <div id="output"></div>
 </body>
 </html>

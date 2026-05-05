@@ -1,5 +1,5 @@
 // ------------------ BAASKLASS ------------------
-// See on "parent class" (kõik teised pärivad sellest)
+// kõik teised (Book, DVD) pärivad sellest
 class LibraryItem {
     id: string;
     title: string;
@@ -16,39 +16,34 @@ class LibraryItem {
         this.year = year;
     }
 
-    // getterid (lihtsalt tagastavad väärtuse)
-    getId(): string { return this.id; }
-    getTitle(): string { return this.title; }
-    getAuthor(): string { return this.author; }
-    getYear(): number { return this.year; }
-
-    // vaikimisi summary
+    // lihtne tekst, mida saab kuvada
     getSummary(): string {
         return `[Item] ${this.title}`;
     }
 }
 
 // ------------------ BOOK ------------------
-// Book "pärib" LibraryItem-ist
 class Book extends LibraryItem {
     pages: number;
     ISBN: string;
 
     constructor(id: string, title: string, author: string, year: number, pages: number, ISBN: string) {
-        super(id, title, author, year); // kutsub parent constructori
+        // kutsume parent constructori
+        super(id, title, author, year);
 
+        // kontroll: lehekülgede arv peab olema > 0
         if (pages <= 0) throw new Error("Pages must be positive");
 
         this.pages = pages;
         this.ISBN = ISBN;
     }
 
-    // override (kirjutab üle parent meetodi)
+    // override (kirjutame parent meetodi üle)
     getSummary(): string {
         return `[Book] ${this.title} (${this.year})`;
     }
 
-    // muudab objekti tekstiks (faili jaoks)
+    // muudame objekti tekstiks (faili jaoks)
     toFileLine(): string {
         return `BOOK|${this.id}|${this.title}|${this.author}|${this.year}|${this.pages}|${this.ISBN}`;
     }
@@ -61,6 +56,7 @@ class DVD extends LibraryItem {
     constructor(id: string, title: string, author: string, year: number, duration: number) {
         super(id, title, author, year);
 
+        // kontroll: kestus peab olema > 0
         if (duration <= 0) throw new Error("Duration must be positive");
 
         this.duration = duration;
@@ -76,32 +72,32 @@ class DVD extends LibraryItem {
 }
 
 // ------------------ LIBRARY ------------------
-// haldab kõiki objekte
+// hoiab kõiki objekte
 class Library {
     items: LibraryItem[];
 
     constructor() {
-        this.items = []; // tühi list
+        this.items = []; // alguses tühi list
     }
 
-    // lisa uus objekt
+    // lisab objekti listi
     addItem(item: LibraryItem): void {
         this.items.push(item);
     }
 
-    // tagasta kõik
+    // tagastab kõik objektid
     getAll(): LibraryItem[] {
         return this.items;
     }
 
-    // tee kõik tekstiks (faili jaoks)
+    // muudab kõik objektid tekstiks (salvestamiseks)
     toText(): string {
         return this.items
             .map((item: any) => item.toFileLine()) // iga objekt → string
-            .join("\n"); // eraldame reavahetusega
+            .join("\n"); // iga rida eraldi
     }
 
-    // loe tekstist tagasi objektid
+    // loeb tekstist tagasi objektid
     loadFromText(text: string): string[] {
         const lines = text.split("\n");
         const errors: string[] = [];
@@ -138,3 +134,6 @@ class Library {
         return errors;
     }
 }
+
+// ÄRA pane export kui kasutad HTML-is otse!
+// export { LibraryItem, Book, DVD, Library };

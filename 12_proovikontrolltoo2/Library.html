@@ -2,103 +2,116 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Library</title>
+
+    <!-- LAE JS FAIL ESIMESENA -->
+    <script src="Library.js"></script>
+
     <script>
-        let library =null;
-        let exports = {};
+        let library = null;
+
         function startPage(){
             library = new Library();
             showItems();
         }
+
         function updateForm(){
             const type = document.getElementById("type").value;
-            document.getElementById("book-fields").style.display = type === "book"?"":"none";
-            document.getElementById("dvd-fields").style.display = type === "dvd"?"":"none";
 
+            document.getElementById("book-fields").style.display =
+                type === "book" ? "" : "none";
+
+            document.getElementById("dvd-fields").style.display =
+                type === "dvd" ? "" : "none";
         }
+
         function addItem(){
             const type = document.getElementById("type").value;
             let item;
+
             try{
                 if (type === "book"){
                     item = new Book(
                         document.getElementById("id").value,
                         document.getElementById("title").value,
                         document.getElementById("author").value,
-                        document.getElementById("year").value,
-                        document.getElementById("pages").value,
-                        document.getElementById("ISBN").value,
+                        Number(document.getElementById("year").value),
+                        Number(document.getElementById("pages").value),
+                        document.getElementById("ISBN").value
                     );
                 } else {
                     item = new DVD(
                         document.getElementById("id").value,
                         document.getElementById("title").value,
                         document.getElementById("author").value,
-                        document.getElementById("year").value,
-                        document.getElementById("duration").value,
-                    )
+                        Number(document.getElementById("year").value),
+                        Number(document.getElementById("duration").value)
+                    );
                 }
+
                 library.addItem(item);
-                showItems()
+                showItems();
+
             } catch (e){
-                alert("Error adding item: " + e.message);
+                alert(e.message);
             }
         }
-        function showItems(){}
-        function loadFile(){}
-        function download(){}
-        //Expose functions to HTML buttons
-        window.startPage=startPage;
-        window.addItem=addItem;
-        window.showItems=showItems;
-        window.loadFile=loadFile;
-        window.download=download;
-        window.updateForm=updateForm;
+
+        function showItems(){
+            const output = document.getElementById("output");
+
+            if (!library || library.items.length === 0){
+                output.innerHTML = "No items";
+                return;
+            }
+
+            let text = "";
+
+            for (let item of library.items){
+                text += item.getSummary() + "<br>";
+            }
+
+            output.innerHTML = text;
+        }
+
+        function loadFile(){
+            alert("Not implemented");
+        }
+
+        function download(){
+            alert("Not implemented");
+        }
     </script>
-    <script src="Library.js"></script>
 </head>
+
 <body onload="startPage()">
     <h1>Library system</h1>
-    <hr>
-    <h3>Upload files</h3>
-    <input type="file" id="fileInput">
-    <button onclick="loadFile()">load</button>
-    <hr>
-    <h3>Add Item</h3>
-    <label>Type:</label>
+
     <select id="type" onchange="updateForm()">
         <option value="book">Book</option>
         <option value="dvd">DVD</option>
     </select>
 
     <br><br>
+
     <input id="id" placeholder="ID">
     <input id="title" placeholder="Title">
     <input id="author" placeholder="Author">
     <input id="year" placeholder="Year">
 
-    <!--book-->
     <span id="book-fields">
-        <input id="pages" type="number" placeholder="Pages">
+        <input id="pages" placeholder="Pages">
         <input id="ISBN" placeholder="ISBN">
     </span>
-    <!--DVD-->
-    <span id="dvd-fields" style="display: none">
-        <input id="duration" type="number" placeholder="Duration">
+
+    <span id="dvd-fields" style="display:none;">
+        <input id="duration" placeholder="Duration">
     </span>
 
     <br><br>
-    <button onclick="addItem()">Add Item</button>
+    <button onclick="addItem()">Add</button>
 
     <hr>
-    <h3>Items</h3>
-    <button onclick="showItems()">Refresh</button>
-    <div id="output" style="font-family:monospace"></div>
-
-    <hr>
-    <h3>Download</h3>
-    <button onclick="download()">Download</button>
-
+    <div id="output"></div>
 </body>
 </html>

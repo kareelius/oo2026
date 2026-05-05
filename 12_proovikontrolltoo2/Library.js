@@ -1,4 +1,3 @@
-"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -14,54 +13,56 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Library = exports.DVD = exports.Book = exports.LibraryItem = void 0;
+// ------------------ BAASKLASS ------------------
+// See on "parent class" (kõik teised pärivad sellest)
 var LibraryItem = /** @class */ (function () {
     function LibraryItem(id, title, author, year) {
-        //Removes the whitespaces from both ends of the string
-        //=== checking whether this is empty after removing spaces
+        // kontroll: ID ei tohi olla tühi
         if (id.trim() === "")
-            throw new Error("ID cannot be emprty");
+            throw new Error("ID cannot be empty");
         this.id = id;
         this.title = title;
         this.author = author;
         this.year = year;
     }
+    // getterid (lihtsalt tagastavad väärtuse)
     LibraryItem.prototype.getId = function () { return this.id; };
     LibraryItem.prototype.getTitle = function () { return this.title; };
     LibraryItem.prototype.getAuthor = function () { return this.author; };
     LibraryItem.prototype.getYear = function () { return this.year; };
-    LibraryItem.prototype.getSummary = function () { return "[Item] ".concat(this.title); };
+    // vaikimisi summary
+    LibraryItem.prototype.getSummary = function () {
+        return "[Item] ".concat(this.title);
+    };
     return LibraryItem;
 }());
-exports.LibraryItem = LibraryItem;
-//-------------------------------Book------------------------------------
+// ------------------ BOOK ------------------
+// Book "pärib" LibraryItem-ist
 var Book = /** @class */ (function (_super) {
     __extends(Book, _super);
     function Book(id, title, author, year, pages, ISBN) {
-        var _this = _super.call(this, id, title, author, year) || this;
+        var _this = _super.call(this, id, title, author, year) || this; // kutsub parent constructori
         if (pages <= 0)
             throw new Error("Pages must be positive");
         _this.pages = pages;
         _this.ISBN = ISBN;
         return _this;
     }
+    // override (kirjutab üle parent meetodi)
     Book.prototype.getSummary = function () {
         return "[Book] ".concat(this.title, " (").concat(this.year, ")");
     };
-    //This method convert the Book object into a text line (for saving)
-    //Here each property is seperated by | so we can read it easily later
-    Book.prototype.toFillLine = function () {
-        return "[Book]|".concat(this.id, "|").concat(this.title, "|").concat(this.author, "|(").concat(this.year, ")|").concat(this.pages, "|").concat(this.ISBN);
+    // muudab objekti tekstiks (faili jaoks)
+    Book.prototype.toFileLine = function () {
+        return "BOOK|".concat(this.id, "|").concat(this.title, "|").concat(this.author, "|").concat(this.year, "|").concat(this.pages, "|").concat(this.ISBN);
     };
     return Book;
 }(LibraryItem));
-exports.Book = Book;
-//----------------------------DVD---------------------------------------------
+// ------------------ DVD ------------------
 var DVD = /** @class */ (function (_super) {
     __extends(DVD, _super);
-    function DVD(id, title, director, year, duration) {
-        var _this = _super.call(this, id, title, director, year) || this;
+    function DVD(id, title, author, year, duration) {
+        var _this = _super.call(this, id, title, author, year) || this;
         if (duration <= 0)
             throw new Error("Duration must be positive");
         _this.duration = duration;
@@ -70,34 +71,32 @@ var DVD = /** @class */ (function (_super) {
     DVD.prototype.getSummary = function () {
         return "[DVD] ".concat(this.title, " (").concat(this.year, ")");
     };
-    DVD.prototype.toFillLine = function () {
-        return "[DVD]|".concat(this.id, "|").concat(this.title, "|").concat(this.author, "|(").concat(this.year, ")|").concat(this.duration);
+    DVD.prototype.toFileLine = function () {
+        return "DVD|".concat(this.id, "|").concat(this.title, "|").concat(this.author, "|").concat(this.year, "|").concat(this.duration);
     };
     return DVD;
 }(LibraryItem));
-exports.DVD = DVD;
-//---------------------------------Library-------------------
-//Manage all the items
+// ------------------ LIBRARY ------------------
+// haldab kõiki objekte
 var Library = /** @class */ (function () {
     function Library() {
-        this.items = [];
-    } //starts with a empty list
-    //add a new item to the library
+        this.items = []; // tühi list
+    }
+    // lisa uus objekt
     Library.prototype.addItem = function (item) {
         this.items.push(item);
     };
+    // tagasta kõik
     Library.prototype.getAll = function () {
         return this.items;
     };
+    // tee kõik tekstiks (faili jaoks)
     Library.prototype.toText = function () {
-        //map is an array method, it takes each item and transform it
-        //i: each item in the array
-        //i.toFillLine converts object-string
-        return this.items.map(function (i) { return i.toFillLine(); }).join("\n");
-        //\n mean new line
-        // join("\n") : mean join everything with line breaks
+        return this.items
+            .map(function (item) { return item.toFileLine(); }) // iga objekt → string
+            .join("\n"); // eraldame reavahetusega
     };
-    //Covert text to objects, because we need to read item details from text files
+    // loe tekstist tagasi objektid
     Library.prototype.loadFromText = function (text) {
         var lines = text.split("\n");
         var errors = [];
@@ -113,23 +112,10 @@ var Library = /** @class */ (function () {
                 }
             }
             catch (e) {
-                errors.push("Error" + line);
+                errors.push("Error in line: " + line);
             }
         }
         return errors;
     };
     return Library;
 }());
-exports.Library = Library;
-var item1 = new LibraryItem("1", "Generic item", "unknown", 2020);
-console.log(item1);
-var book1 = new Book("2B", "Harry Potter", "J.K rowling", 1990, 300, "334445");
-var book2 = new Book("3B", "The hobbit", "J.R.R Tolkien", 1937, 300, "554445");
-console.log(book1);
-console.log(item1.getSummary());
-console.log(book1.getSummary());
-console.log(book1.toFillLine());
-var lib = new Library();
-lib.addItem(book1);
-lib.addItem(book2);
-console.log(lib.toText());

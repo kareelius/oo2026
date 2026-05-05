@@ -1,0 +1,205 @@
+OOP EXAM CHEATSHEET (LIHTNE)
+
+---
+
+1. KLASS JA OBJEKT
+
+---
+
+class ClassName {
+property: type;
+
+```
+constructor(...) {
+    this.property = value;
+}
+```
+
+}
+
+let obj = new ClassName(...);
+
+MEELDE:
+
+* class = blueprint
+* object = päris asi (instance)
+* new = loob objekti
+
+---
+
+2. CONSTRUCTOR
+
+---
+
+constructor(id: string) {
+if (id.trim() === "") throw new Error("error");
+this.id = id;
+}
+
+MEELDE:
+
+* käivitub automaatselt
+* kontrollid (validation) käivad siin
+
+---
+
+3. GETTERID
+
+---
+
+getId(): string {
+return this.id;
+}
+
+MEELDE:
+
+* lihtsalt tagastab väärtuse
+* ei muuda midagi
+
+---
+
+4. PÄRILUS (INHERITANCE)
+
+---
+
+class Book extends LibraryItem
+
+MEELDE:
+
+* child saab parent omadused
+* väldib koodi kordamist
+
+---
+
+5. SUPER
+
+---
+
+super(id, title, author, year);
+
+MEELDE:
+
+* kutsub parent constructori
+* peab olema enne this kasutamist
+
+---
+
+6. OVERRIDE (ÜLEKIRJUTAMINE)
+
+---
+
+getSummary(): string {
+return "[Book] " + this.title;
+}
+
+MEELDE:
+
+* sama meetod, erinev käitumine
+* kasutatakse child klassis
+
+---
+
+7. ARRAY + OBJEKTID
+
+---
+
+this.items.push(item);
+
+MEELDE:
+
+* push = lisa
+* array hoiab objekte
+
+---
+
+8. LOOP (läbikäimine)
+
+---
+
+for (let item of this.items) {
+console.log(item);
+}
+
+MEELDE:
+
+* for-of = lihtne loop
+
+---
+
+9. STRING ↔ OBJECT
+
+---
+
+SALVESTAMINE:
+BOOK|id|title|author|year|pages|isbn
+
+LUGEMINE:
+const parts = line.split("|");
+
+MEELDE:
+
+* split = string → array
+* join = array → string
+
+---
+
+10. MAP + JOIN
+
+---
+
+this.items.map(i => i.toFileLine()).join("\n")
+
+MEELDE:
+
+* map = muudab iga elemendi
+* join = liidab üheks stringiks
+
+---
+
+11. ERROR HANDLING
+
+---
+
+try {
+// code
+} catch (e) {
+alert(e.message);
+}
+
+MEELDE:
+
+* try = proovi
+* catch = kui error
+
+---
+
+12. TÜÜPILISED VEAD
+
+---
+
+* unustad "new"
+* super() puudub
+* vale property nimi
+* string vs number segamini
+* split/join valesti
+* HTML id ei klapi JS-ga
+
+---
+
+13. KIIRE MÕTLEMINE TESTIS
+
+---
+
+Kui näed:
+
+* "loo klass" → tee class + constructor
+* "lisa objekt" → new + push
+* "kuva" → toString() või getSummary()
+* "fail" → split + join
+
+---
+
+## LÕPP
+
+HOIA LIHTNE. ÄRA ÜLE MÕTLE.
+KUI SAAD LOOGIKAST ARU → SAAD HAKKAMA.

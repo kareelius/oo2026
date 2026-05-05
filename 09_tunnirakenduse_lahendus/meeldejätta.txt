@@ -1,0 +1,133 @@
+KETTLE / WATER – MEELDEJÄTTA
+
+---
+
+1. KLASS
+
+---
+
+class Water
+
+* hoiab vee andmeid
+* sisaldab loogikat (meetodid)
+
+---
+
+2. OMADUSED (PROPERTIES)
+
+---
+
+waterAmount → vee kogus (g)
+temperature → temperatuur (°C)
+heatingPower → võimsus (W)
+specialHeatCapacity = 4200
+
+MEELDE:
+
+* 4200 on konstant (vesi)
+
+---
+
+3. CONSTRUCTOR
+
+---
+
+new Water(mass, temperature)
+
+* loob objekti
+* seab algväärtused
+
+---
+
+4. SETTER
+
+---
+
+setHeatingPower(power)
+
+* määrab võimsuse
+
+---
+
+5. GETTER
+
+---
+
+getTemperature()
+
+* tagastab temperatuuri
+
+---
+
+6. KUUMUTAMINE
+
+---
+
+heatAsecond()
+
+valem:
+deltaT = power / (c * m)
+
+MEELDE:
+
+* m peab olema kg → /1000
+* suurendab temperatuuri
+
+---
+
+7. AJA ARVUTAMINE
+
+---
+
+calculateHeatingTime(target)
+
+valem:
+time = energy / power
+
+kus:
+energy = diff * c * m
+
+MEELDE:
+
+* diff = target - current
+* tulemus sekundites
+
+---
+
+8. VÄGA OLULINE
+
+---
+
+* gramm → kg ( /1000 )
+* kui power = 0 → ei tööta
+* kui target <= current → aeg = 0
+
+---
+
+9. TÜÜPILISED VEAD
+
+---
+
+* unustad /1000
+* jagad nulliga
+* ei kasuta this.
+* ei kontrolli inputit
+
+---
+
+10. LOOGIKA (PEAS HOIDA)
+
+---
+
+1. loo objekt → new Water()
+2. määra power → setHeatingPower()
+3. kuumuta → heatAsecond()
+4. loe temp → getTemperature()
+
+---
+
+## LÕPP
+
+HOIA LIHTNE:
+rohkem power = kiirem
+rohkem vett = aeglasem

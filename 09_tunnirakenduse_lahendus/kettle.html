@@ -9,9 +9,10 @@
 
 <p>Max capacity: 3 liters (3000g)</p>
 
+<!-- siia kuvame tulemuse -->
 <p id="output">No water has been added yet</p>
 
-<!-- INPUTS -->
+<!-- INPUTID -->
 <label>Water (g)</label>
 <input id="waterAmount">
 
@@ -27,31 +28,37 @@
 
 <br><br>
 
-<!-- NEW: Target temperature -->
+<!-- siht temperatuur -->
 <label>Target Temperature (°C)</label>
 <input id="targetTemp">
 
 <br><br>
 
-<!-- BUTTONS -->
+<!-- NUPUD -->
 <button id="startBtn">Add Water</button>
 <button id="heatBtn">Start Heating</button>
 <button id="stopBtn">Stop</button>
 <button id="calcBtn">Calculate Time</button>
 
+<!-- siin on Water klass -->
 <script src="01_kettle.js"></script>
 
 <script>
+// siia salvestame objekti
 let water = null;
+
+// see hoiab intervalli (simulatsioon)
 let interval = null;
 
-// ADD WATER
+// ---------------- ADD WATER ----------------
 document.getElementById("startBtn").onclick = function () {
 
+    // võtame input väärtused
     let m = document.getElementById("waterAmount").value;
     let t = document.getElementById("temperature").value;
     let p = document.getElementById("power").value;
 
+    // kontroll: kas kõik täidetud
     if (m === "" || t === "" || p === "") {
         document.getElementById("output").innerText =
             "Please fill all fields";
@@ -60,49 +67,62 @@ document.getElementById("startBtn").onclick = function () {
 
     let mass = Number(m);
 
+    // kontroll: max 3000g
     if (mass > 3000) {
         document.getElementById("output").innerText =
-            "❌ Max capacity is 3 liters (3000g)";
+            "Max capacity is 3000g";
         return;
     }
 
+    // loome Water objekti
     water = new Water(mass, Number(t));
+
+    // paneme võimsuse
     water.setHeatingPower(Number(p));
 
     document.getElementById("output").innerText =
         "Water added. Temperature: " + t + " °C";
 };
 
-// HEATING SIMULATION
+
+// ---------------- HEATING ----------------
 document.getElementById("heatBtn").onclick = function () {
 
+    // kui vett pole
     if (!water) {
         document.getElementById("output").innerText =
             "No water has been added yet";
         return;
     }
 
+    // peatame vana intervalli (kui oli)
     clearInterval(interval);
 
+    // käivitame simulatsiooni (iga 1 sekund)
     interval = setInterval(function () {
 
+        // tõstab temperatuuri
         water.heatAsecond();
 
         document.getElementById("output").innerText =
             "Heating... " + water.getTemperature().toFixed(2) + " °C";
 
+        // kui jõuab keemiseni
         if (water.getTemperature() >= 100) {
             clearInterval(interval);
+
             document.getElementById("output").innerText =
-                "🔥 BOILING! 100°C reached";
+                "BOILING! 100°C reached";
         }
 
     }, 1000);
 };
 
-// STOP
+
+// ---------------- STOP ----------------
 document.getElementById("stopBtn").onclick = function () {
-    clearInterval(interval);
+
+    clearInterval(interval); // peatame simulatsiooni
 
     if (water) {
         document.getElementById("output").innerText =
@@ -110,7 +130,8 @@ document.getElementById("stopBtn").onclick = function () {
     }
 };
 
-// 🆕 CALCULATE TARGET TIME
+
+// ---------------- CALCULATE TIME ----------------
 document.getElementById("calcBtn").onclick = function () {
 
     if (!water) {
@@ -123,10 +144,11 @@ document.getElementById("calcBtn").onclick = function () {
 
     if (target === "") {
         document.getElementById("output").innerText =
-            "Please enter target temperature";
+            "Enter target temperature";
         return;
     }
 
+    // arvutab aja sekundites
     let time = water.calculateHeatingTime(Number(target));
 
     let seconds = Math.floor(time);

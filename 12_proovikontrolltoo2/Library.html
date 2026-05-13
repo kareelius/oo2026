@@ -2,142 +2,285 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Library</title>
-
-    <!-- Laeme kõigepealt klassid (Library, Book, DVD) -->
-    <script src="Library.js"></script>
-
-    <script>
-        // siia salvestame Library objekti
-        let library = null;
-
-        // käivitub kui leht avaneb
-        function startPage(){
-            library = new Library(); // loome uue library
-            showItems(); // kuvame (alguses tühi)
-        }
-
-        // muudab vormi sõltuvalt kas Book või DVD
-        function updateForm(){
-            const type = document.getElementById("type").value;
-
-            // näita book välju ainult siis kui valitud book
-            document.getElementById("book-fields").style.display =
-                type === "book" ? "" : "none";
-
-            // näita dvd välju ainult siis kui valitud dvd
-            document.getElementById("dvd-fields").style.display =
-                type === "dvd" ? "" : "none";
-        }
-
-        // lisab uue objekti (Book või DVD)
-        function addItem(){
-            const type = document.getElementById("type").value;
-            let item; // siia tuleb objekt
-
-            try{
-                if (type === "book"){
-                    // loome Book objekti
-                    item = new Book(
-                        document.getElementById("id").value,
-                        document.getElementById("title").value,
-                        document.getElementById("author").value,
-                        Number(document.getElementById("year").value), // string → number
-                        Number(document.getElementById("pages").value),
-                        document.getElementById("ISBN").value
-                    );
-                } else {
-                    // loome DVD objekti
-                    item = new DVD(
-                        document.getElementById("id").value,
-                        document.getElementById("title").value,
-                        document.getElementById("author").value,
-                        Number(document.getElementById("year").value),
-                        Number(document.getElementById("duration").value)
-                    );
-                }
-
-                // lisame objekti listi
-                library.addItem(item);
-
-                // uuendame ekraani
-                showItems();
-
-            } catch (e){
-                // kui tekib viga (nt vale input)
-                alert(e.message);
-            }
-        }
-
-        // kuvab kõik objektid ekraanile
-        function showItems(){
-            const output = document.getElementById("output");
-
-            // kui list tühi
-            if (!library || library.items.length === 0){
-                output.innerHTML = "No items";
-                return;
-            }
-
-            let text = "";
-
-            // käime kõik objektid läbi
-            for (let item of library.items){
-                // iga objekt annab oma teksti
-                text += item.getSummary() + "<br>";
-            }
-
-            // paneme tulemuse HTML-i
-            output.innerHTML = text;
-        }
-
-        // pole tehtud (pole vaja praegu)
-        function loadFile(){
-            alert("Not implemented");
-        }
-
-        function download(){
-            alert("Not implemented");
-        }
-    </script>
+    <title>Library System</title>
 </head>
+<body>
 
-<body onload="startPage()">
-    <h1>Library system</h1>
+<h1>Library System</h1>
 
-    <!-- valik: Book või DVD -->
-    <select id="type" onchange="updateForm()">
-        <option value="book">Book</option>
-        <option value="dvd">DVD</option>
-    </select>
+<label>Type:</label>
 
-    <br><br>
+<select id="type" onchange="updateForm()">
+    <option value="book">Book</option>
+    <option value="dvd">DVD</option>
+</select>
 
-    <!-- üldised väljad -->
-    <input id="id" placeholder="ID">
-    <input id="title" placeholder="Title">
-    <input id="author" placeholder="Author">
-    <input id="year" placeholder="Year">
+<br><br>
 
-    <!-- Book väljad -->
-    <span id="book-fields">
-        <input id="pages" placeholder="Pages">
-        <input id="ISBN" placeholder="ISBN">
-    </span>
+<input id="id" placeholder="ID">
+<input id="title" placeholder="Title">
+<input id="author" placeholder="Author">
+<input id="year" placeholder="Year">
 
-    <!-- DVD väljad -->
-    <span id="dvd-fields" style="display:none;">
-        <input id="duration" placeholder="Duration">
-    </span>
+<span id="book-fields">
+    <input id="pages" placeholder="Pages">
+</span>
 
-    <br><br>
+<span id="dvd-fields" style="display:none;">
+    <input id="duration" placeholder="Duration">
+</span>
 
-    <!-- nupp lisamiseks -->
-    <button onclick="addItem()">Add</button>
+<br><br>
 
-    <hr>
+<button onclick="addItem()">Add Item</button>
 
-    <!-- siia kuvatakse tulemused -->
-    <div id="output"></div>
+<hr>
+
+<h3>Search</h3>
+
+<input id="searchText" placeholder="Search by title">
+
+<button onclick="searchItems()">Search</button>
+
+<button onclick="showItems()">Show All</button>
+
+<hr>
+
+<h3>Items</h3>
+
+<div id="output"></div>
+
+<hr>
+
+<h3>Import JSON</h3>
+
+<input type="file" id="fileInput">
+
+<button onclick="importJson()">Import</button>
+
+<hr>
+
+<h3>Export JSON</h3>
+
+<button onclick="exportJson()">Export</button>
+
+<script type="module">
+
+import { Library, Book, DVD } from "./Library.js";
+
+let library = null;
+
+startPage();
+
+function startPage(){
+
+    library = new Library();
+
+    updateForm();
+
+    showItems();
+}
+
+function updateForm(){
+
+    const type = document.getElementById("type").value;
+
+    const bookFields =
+        document.getElementById("book-fields");
+
+    const dvdFields =
+        document.getElementById("dvd-fields");
+
+    if(type === "book"){
+
+        bookFields.style.display = "inline";
+
+        dvdFields.style.display = "none";
+    }
+
+    else {
+
+        bookFields.style.display = "none";
+
+        dvdFields.style.display = "inline";
+    }
+}
+
+function addItem(){
+
+    const type =
+        document.getElementById("type").value;
+
+    let item;
+
+    try {
+
+        if(type === "book"){
+
+            item = new Book(
+                document.getElementById("id").value,
+                document.getElementById("title").value,
+                document.getElementById("author").value,
+                Number(document.getElementById("year").value),
+                Number(document.getElementById("pages").value)
+            );
+        }
+
+        else {
+
+            item = new DVD(
+                document.getElementById("id").value,
+                document.getElementById("title").value,
+                document.getElementById("author").value,
+                Number(document.getElementById("year").value),
+                Number(document.getElementById("duration").value)
+            );
+        }
+
+        library.addItem(item);
+
+        showItems();
+
+    } catch(e){
+
+        alert(e.message);
+    }
+}
+
+function showItems(){
+
+    const output =
+        document.getElementById("output");
+
+    if(library.items.length === 0){
+
+        output.innerHTML = "No items";
+
+        return;
+    }
+
+    let text = "";
+
+    for(let item of library.items){
+
+        text += item.getSummary() + "<br>";
+    }
+
+    output.innerHTML = text;
+}
+
+function searchItems(){
+
+    const text =
+        document.getElementById("searchText").value;
+
+    const result =
+        library.searchByTitle(text);
+
+    const output =
+        document.getElementById("output");
+
+    if(result.length === 0){
+
+        output.innerHTML = "No results";
+
+        return;
+    }
+
+    let html = "";
+
+    for(let item of result){
+
+        html += item.getSummary() + "<br>";
+    }
+
+    output.innerHTML = html;
+}
+
+function exportJson(){
+
+    const data =
+        JSON.stringify(library.items, null, 2);
+
+    const blob = new Blob(
+        [data],
+        { type: "application/json" }
+    );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download = "library.json";
+
+    a.click();
+}
+
+function importJson(){
+
+    const file =
+        document.getElementById("fileInput").files[0];
+
+    if(!file){
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        const data =
+            JSON.parse(e.target.result);
+
+        library.items = [];
+
+        for(let item of data){
+
+            if(item.pages){
+
+                library.addItem(
+                    new Book(
+                        item.id,
+                        item.title,
+                        item.author,
+                        item.year,
+                        item.pages
+                    )
+                );
+            }
+
+            else {
+
+                library.addItem(
+                    new DVD(
+                        item.id,
+                        item.title,
+                        item.author,
+                        item.year,
+                        item.duration
+                    )
+                );
+            }
+        }
+
+        showItems();
+    };
+
+    reader.readAsText(file);
+}
+
+window.addItem = addItem;
+window.updateForm = updateForm;
+window.exportJson = exportJson;
+window.importJson = importJson;
+window.searchItems = searchItems;
+window.showItems = showItems;
+
+</script>
+
 </body>
 </html>

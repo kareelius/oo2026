@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Temperature Simulation</title>
+</head>
+<body>
+
+<h1>Temperature Simulation</h1>
+
+<button onclick="runSimulation()">
+    Run Simulation
+</button>
+
+<hr>
+
+<div id="output"></div>
+
+<script src="temperature.js"></script>
+
+<script>
+
+function runSimulation(){
+
+    const output =
+        document.getElementById("output");
+
+    const water =
+        new MaterialAmount(
+            3,
+            4200,
+            20
+        );
+
+    const iron =
+        new MaterialAmount(
+            10,
+            412,
+            20
+        );
+
+    water.addEnergy(10000);
+
+    iron.addEnergy(10000);
+
+    let text = "";
+
+    text +=
+        "Water: "
+        + water.getTemperature().toFixed(2)
+        + " °C<br>";
+
+    text +=
+        "Iron: "
+        + iron.getTemperature().toFixed(2)
+        + " °C<br><br>";
+
+    if(iron.getTemperature() > water.getTemperature()){
+
+        iron.addEnergy(-1000);
+
+        water.addEnergy(1000);
+
+        text +=
+            "After transfer:<br>";
+
+        text +=
+            "Water: "
+            + water.getTemperature().toFixed(2)
+            + " °C<br>";
+
+        text +=
+            "Iron: "
+            + iron.getTemperature().toFixed(2)
+            + " °C<br><br>";
+    }
+
+    const air =
+        new AirAmount(
+            5,
+            4,
+            3,
+            22
+        );
+
+    text +=
+        "Air mass: "
+        + air.mass.toFixed(2)
+        + " kg<br>";
+
+    text +=
+        "Air temperature: "
+        + air.getTemperature().toFixed(2)
+        + " °C<br><br>";
+
+    const equalTemperature =
+        calculateEqualTemperature([
+            water,
+            iron,
+            air
+        ]);
+
+    text +=
+        "Equal temperature: "
+        + equalTemperature.toFixed(2)
+        + " °C";
+
+    output.innerHTML = text;
+}
+
+</script>
+
+</body>
+</html>

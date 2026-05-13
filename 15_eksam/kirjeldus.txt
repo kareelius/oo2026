@@ -4,3 +4,10 @@ Suvepraktikal osalejatel on soovitav esitada lõik oma praktikatööst.
 Rühmas koostatud rakenduse korral peab esitajal olema suurema rakenduse hulgas omale lähedalt tuttav koodiosa. 
 
 Esitatud koodilõik ei pea pärast praktikatöö juures täpselt samal kujul sisse jääma. 
+
+
+atleast 1 parent class and subclass. or if possible use interface and classes extending those interfaces
+use private methods to show the encapsulation
+whether my code have check, inheritance and encapsulation and other object orietned concepts.
+seminar guide, check what i have to cover (example use of arrays, try catch, different data types)
+and add tests

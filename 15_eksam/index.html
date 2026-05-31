@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+<html lang="et">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kultuuriranits</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f4f4f4;
+      color: #222;
+    }
+
+    h1 {
+      background: #2d5a3d;
+      color: white;
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #2d5a3d;
+    }
+
+    .vorm {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      border: 1px solid #ddd;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 14px;
+      padding: 9px 18px;
+      background: #2d5a3d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: #234830;
+    }
+
+    .kasutaja-kaart {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+    }
+
+    .roll {
+      font-size: 12px;
+      color: white;
+      background: #2d5a3d;
+      padding: 2px 8px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .roll.opilane {
+      background: #b5572a;
+    }
+
+    .viga {
+      color: red;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    #kasutajate-list p {
+      color: #888;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Kultuuriranits — kasutajad</h1>
+
+  <!-- õpetaja lisamine -->
+  <div class="vorm">
+    <h2>Lisa õpetaja</h2>
+    <label>Nimi</label>
+    <input id="opetajaNimi" type="text" placeholder="nt Jaan Tamm" />
+    <label>Email</label>
+    <input id="opetajaEmail" type="text" placeholder="nt jaan@kool.ee" />
+    <label>Vanus</label>
+    <input id="opetajaVanus" type="number" placeholder="nt 35" />
+    <label>Kool</label>
+    <input id="opetajaKool" type="text" placeholder="nt Tallinna Reaalkool" />
+    <br />
+    <button onclick="lisaOpetaja()">Lisa õpetaja</button>
+    <div class="viga" id="opetajaViga"></div>
+  </div>
+
+  <!-- õpilase lisamine -->
+  <div class="vorm">
+    <h2>Lisa õpilane</h2>
+    <label>Nimi</label>
+    <input id="opilaseNimi" type="text" placeholder="nt Mari Mägi" />
+    <label>Email</label>
+    <input id="opilaseEmail" type="text" placeholder="nt mari@kool.ee" />
+    <label>Vanus</label>
+    <input id="opilaseVanus" type="number" placeholder="nt 15" />
+    <label>Klass</label>
+    <input id="opilaseKlass" type="number" placeholder="nt 9" />
+    <br />
+    <button onclick="lisaOpilane()">Lisa õpilane</button>
+    <div class="viga" id="opilaseViga"></div>
+  </div>
+
+  <!-- kasutajate nimekiri -->
+  <div class="vorm">
+    <h2>Kasutajad</h2>
+    <div id="kasutajate-list"><p>Veel pole kasutajaid lisatud.</p></div>
+  </div>
+
+  <script>
+    // kasutajate massiiv
+    const kasutajad = [];
+
+    // parent class
+    class Person {
+      constructor(nimi, email, vanus) {
+        // kui nimi või email on tühi, viskan vea
+        if (!nimi || !email) {
+          throw new Error("Nimi ja email on kohustuslikud.");
+        }
+        this.nimi = nimi;
+        this.email = email;
+        this.vanus = vanus;
+      }
+
+      getNimi()  { return this.nimi; }
+      getEmail() { return this.email; }
+
+      // subclassid kirjutavad selle üle
+      getRoll()  { return ""; }
+      kirjelda() { return ""; }
+    }
+
+    // subclass - õpetaja
+    class Teacher extends Person {
+      constructor(nimi, email, vanus, kool) {
+        super(nimi, email, vanus); // kutsub Person constructori välja
+        this.kool = kool;
+      }
+
+      getRoll()  { return "opetaja"; }
+      getKool()  { return this.kool; }
+      kirjelda() { return `${this.nimi} — ${this.kool}`; }
+    }
+
+    // subclass - õpilane
+    class Student extends Person {
+      constructor(nimi, email, vanus, klass) {
+        super(nimi, email, vanus);
+        this.klass = klass;
+      }
+
+      getRoll()  { return "opilane"; }
+      getKlass() { return this.klass; }
+      kirjelda() { return `${this.nimi} — klass ${this.klass}`; }
+    }
+
+    function lisaOpetaja() {
+      const viga = document.getElementById("opetajaViga");
+      viga.textContent = "";
+
+      try {
+        const nimi  = document.getElementById("opetajaNimi").value.trim();
+        const email = document.getElementById("opetajaEmail").value.trim();
+        const vanus = parseInt(document.getElementById("opetajaVanus").value);
+        const kool  = document.getElementById("opetajaKool").value.trim();
+
+        if (!kool) throw new Error("Kooli nimi on kohustuslik.");
+
+        // kontrollime et sama emailiga kasutajat pole juba olemas
+        if (kasutajad.find(k => k.getEmail() === email)) {
+          throw new Error("See email on juba kasutusel.");
+        }
+
+        const opetaja = new Teacher(nimi, email, vanus, kool);
+        kasutajad.push(opetaja);
+        uuendaNimekiri();
+
+        ["opetajaNimi", "opetajaEmail", "opetajaVanus", "opetajaKool"]
+          .forEach(id => document.getElementById(id).value = "");
+
+      } catch (err) {
+        viga.textContent = err.message;
+      }
+    }
+
+    function lisaOpilane() {
+      const viga = document.getElementById("opilaseViga");
+      viga.textContent = "";
+
+      try {
+        const nimi  = document.getElementById("opilaseNimi").value.trim();
+        const email = document.getElementById("opilaseEmail").value.trim();
+        const vanus = parseInt(document.getElementById("opilaseVanus").value);
+        const klass = parseInt(document.getElementById("opilaseKlass").value);
+
+        if (isNaN(klass) || klass < 1) throw new Error("Klass peab olema number.");
+
+        if (kasutajad.find(k => k.getEmail() === email)) {
+          throw new Error("See email on juba kasutusel.");
+        }
+
+        const opilane = new Student(nimi, email, vanus, klass);
+        kasutajad.push(opilane);
+        uuendaNimekiri();
+
+        ["opilaseNimi", "opilaseEmail", "opilaseVanus", "opilaseKlass"]
+          .forEach(id => document.getElementById(id).value = "");
+
+      } catch (err) {
+        viga.textContent = err.message;
+      }
+    }
+
+    function uuendaNimekiri() {
+      const konteiner = document.getElementById("kasutajate-list");
+
+      if (kasutajad.length === 0) {
+        konteiner.innerHTML = "<p>Veel pole kasutajaid lisatud.</p>";
+        return;
+      }
+
+      konteiner.innerHTML = kasutajad.map(k => `
+        <div class="kasutaja-kaart">
+          <span class="roll ${k.getRoll()}">${k.getRoll()}</span>
+          <div><strong>${k.kirjelda()}</strong></div>
+          <div style="font-size:13px; color:#666; margin-top:4px">${k.getEmail()}</div>
+        </div>
+      `).join("");
+    }
+  </script>
+
+</body>
+</html>

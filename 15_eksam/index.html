@@ -99,6 +99,18 @@
       color: #888;
       font-size: 14px;
     }
+
+    .grupp {
+      margin-bottom: 16px;
+    }
+
+    .grupp-pealkiri {
+      font-size: 12px;
+      font-weight: bold;
+      color: #2d5a3d;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 <body>
@@ -256,11 +268,30 @@
         return;
       }
 
-      konteiner.innerHTML = kasutajad.map(k => `
-        <div class="kasutaja-kaart">
-          <span class="roll ${k.getRoll()}">${k.getRoll()}</span>
-          <div><strong>${k.kirjelda()}</strong></div>
-          <div style="font-size:13px; color:#666; margin-top:4px">${k.getEmail()}</div>
+      // võtame emailist domeeni osa, nt "jaan@reaalkool.ee" -> "reaalkool.ee"
+      function getDomeen(email) {
+        return email.includes("@") ? email.split("@")[1] : "muu";
+      }
+
+      // grupeerime kasutajad domeeni järgi
+      const grupid = {};
+      kasutajad.forEach(k => {
+        const domeen = getDomeen(k.getEmail());
+        if (!grupid[domeen]) grupid[domeen] = [];
+        grupid[domeen].push(k);
+      });
+
+      // kuvame iga grupp eraldi
+      konteiner.innerHTML = Object.entries(grupid).map(([domeen, liikmed]) => `
+        <div class="grupp">
+          <div class="grupp-pealkiri">@${domeen} (${liikmed.length})</div>
+          ${liikmed.map(k => `
+            <div class="kasutaja-kaart">
+              <span class="roll ${k.getRoll()}">${k.getRoll()}</span>
+              <div><strong>${k.kirjelda()}</strong></div>
+              <div>${k.getEmail()}</div>
+            </div>
+          `).join("")}
         </div>
       `).join("");
     }
